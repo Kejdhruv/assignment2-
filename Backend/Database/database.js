@@ -1,15 +1,24 @@
-import express from "express";
-import cors from "cors"; 
-const app = express();
-const PORT = 3000;
+const { MongoClient } = require("mongodb");
 
-app.use(cors());
-app.use(express.json());
+const database = 'Assignment2';
+const url = 'mongodb://localhost:27017';
+const client = new MongoClient(url);
 
-app.get('/', (req, res) => {
-  res.send("yo man wassup");
-});
-app.listen(PORT, () => {
-  console.log(`yo i m there at http://localhost:${PORT}`);
-});
+async function dbConnect1() {
+    try {
+        
+        await client.connect();
+       
+        const db = client.db(database);
+        const collection = db.collection('Cars');
 
+        const data = await collection.find({}).toArray();
+
+        return data;
+    } catch (err) {
+        console.error("Error connecting to MongoDB:", err);
+        throw err; 
+    }
+}
+
+module.exports = dbConnect1; 
