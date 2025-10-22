@@ -4,8 +4,9 @@ import "./home.css";
 export default function Home() {
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [distance, setDistance] = useState("");
+  const [input, setInput] = useState(""); // distance or time
   const [results, setResults] = useState([]);
+  const [mode, setMode] = useState("distance"); // "distance" or "time"
 
   useEffect(() => {
     fetch("http://localhost:3000/Cars")
@@ -15,16 +16,25 @@ export default function Home() {
   }, []);
 
   const calculate = () => {
-    if (!distance || !selectedVehicle) return;
+    if (!input || !selectedVehicle) return;
 
-    const inputDistance = parseFloat(distance);
+    const value = parseFloat(input);
 
     const compute = (v) => {
-      const time = inputDistance / v.topSpeed_kmh; 
-      const fuel = inputDistance / v.fuelEfficiency_kmpl; 
-      const inRange = inputDistance <= v.maxRange_km;
+      let distance, time;
+      if (mode === "distance") {
+        distance = value;
+        time = distance / v.topSpeed_kmh;
+      } else {
+        time = value;
+        distance = time * v.topSpeed_kmh;
+      }
+      const fuel = distance / v.fuelEfficiency_kmpl;
+      const inRange = distance <= v.maxRange_km;
+
       return {
         ...v,
+        distance,
         time,
         fuel,
         inRange,
@@ -34,7 +44,9 @@ export default function Home() {
     let resultsAll = vehicles.map(compute);
 
     // Move selected vehicle to top
-    resultsAll.sort((a, b) => (a.type === selectedVehicle ? -1 : b.type === selectedVehicle ? 1 : 0));
+    resultsAll.sort((a, b) =>
+      a.type === selectedVehicle ? -1 : b.type === selectedVehicle ? 1 : 0
+    );
 
     setResults(resultsAll);
   };
@@ -52,12 +64,36 @@ export default function Home() {
     <div className="converter-container">
       <h1>🚗 Vehicle Transport Converter</h1>
 
+      {/* Mode toggle */}
+      <div className="mode-toggle">
+        <label>
+          <input
+            type="radio"
+            name="mode"
+            value="distance"
+            checked={mode === "distance"}
+            onChange={() => setMode("distance")}
+          />
+          Distance Mode
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="mode"
+            value="time"
+            checked={mode === "time"}
+            onChange={() => setMode("time")}
+          />
+          Time Mode
+        </label>
+      </div>
+
       <div className="input-section">
         <input
           type="number"
-          placeholder="Enter distance in km"
-          value={distance}
-          onChange={(e) => setDistance(e.target.value)}
+          placeholder={mode === "distance" ? "Enter distance in km" : "Enter time in hours"}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
         />
         <select
           value={selectedVehicle}
@@ -78,11 +114,16 @@ export default function Home() {
           {results.map((r) => (
             <div
               key={r._id}
-              className={`vehicle-card ${r.inRange ? "in-range" : "out-range"} ${r.type === selectedVehicle ? "selected-vehicle" : ""}`}
+              className={`vehicle-card ${
+                r.inRange ? "in-range" : "out-range"
+              } ${r.type === selectedVehicle ? "selected-vehicle" : ""}`}
             >
               <h3>
                 {r.type} {!r.inRange && <span className="out-range-text">❌ Out of Range</span>}
               </h3>
+              <p>
+                <strong>Distance:</strong> {r.distance.toFixed(2)} km
+              </p>
               <p>
                 <strong>Time:</strong> {formatTime(r.time)}
               </p>
