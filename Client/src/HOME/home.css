@@ -1,4 +1,4 @@
-/* Container */
+
 .converter-container {
   max-width: 1000px;
   margin: 40px auto;
@@ -19,7 +19,7 @@ h1 {
 }
 
 
-/* Mode toggle */
+
 .mode-toggle {
   display: flex;
   justify-content: center;
@@ -44,7 +44,7 @@ h1 {
   accent-color: #007bff;
 }
 
-/* Input section */
+
 .input-section {
   display: flex;
   flex-wrap: wrap;
@@ -85,7 +85,7 @@ button:hover {
   transform: scale(1.05);
 }
 
-/* Flex container for cards + chart */
+
 .results-chart-container {
   display: flex;
   gap: 30px;
@@ -93,7 +93,7 @@ button:hover {
   margin-top: 30px;
 }
 
-/* Left side: vehicle cards */
+
 .results-section {
   flex: 1;
   display: grid;
@@ -103,7 +103,7 @@ button:hover {
   overflow-y: auto;
 }
 
-/* Vehicle cards */
+
 .vehicle-card {
   padding: 18px 15px;
   border-radius: 16px;
@@ -151,7 +151,7 @@ button:hover {
   font-size: 0.95rem;
 }
 
-/* Right side: chart */
+
 .chart-section {
   flex: 1;
   min-width: 300px;
@@ -161,7 +161,7 @@ button:hover {
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
-/* Responsive adjustments */
+
 @media(max-width: 900px) {
   .results-chart-container {
     flex-direction: column;

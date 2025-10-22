@@ -16,9 +16,9 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 export default function Home() {
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [input, setInput] = useState(""); // distance or time
+  const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  const [mode, setMode] = useState("distance"); // "distance" or "time"
+  const [mode, setMode] = useState("distance"); 
 
   useEffect(() => {
     fetch("http://localhost:3000/Cars")
@@ -64,7 +64,7 @@ export default function Home() {
     return `${h} hr ${m} min`;
   };
 
-  // Prepare chart data
+
   const chartData = {
     labels: results.map(r => r.type),
     datasets: [
@@ -95,7 +95,7 @@ export default function Home() {
     <div className="converter-container">
       <h1>🚗 Vehicle Transport Converter</h1>
 
-      {/* Mode toggle */}
+
       <div className="mode-toggle">
         <label>
           <input
@@ -142,7 +142,7 @@ export default function Home() {
 
       {results.length > 0 && (
         <div className="results-chart-container">
-          {/* Left: Vehicle Cards */}
+     
           <div className="results-section">
             {results.map((r) => (
               <div
@@ -167,7 +167,7 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Right: Chart */}
+      
           <div className="chart-section">
             <Bar data={chartData} options={chartOptions} />
           </div>
