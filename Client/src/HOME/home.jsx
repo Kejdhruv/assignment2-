@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from "chart.js";
 import "./home.css";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function Home() {
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [input, setInput] = useState(""); 
+  const [input, setInput] = useState(""); // distance or time
   const [results, setResults] = useState([]);
-  const [mode, setMode] = useState("distance"); 
+  const [mode, setMode] = useState("distance"); // "distance" or "time"
 
   useEffect(() => {
     fetch("http://localhost:3000/Cars")
@@ -17,7 +29,6 @@ export default function Home() {
 
   const calculate = () => {
     if (!input || !selectedVehicle) return;
-
     const value = parseFloat(input);
 
     const compute = (v) => {
@@ -31,18 +42,12 @@ export default function Home() {
       }
       const fuel = distance / v.fuelEfficiency_kmpl;
       const inRange = distance <= v.maxRange_km;
-
-      return {
-        ...v,
-        distance,
-        time,
-        fuel,
-        inRange,
-      };
+      return { ...v, distance, time, fuel, inRange };
     };
 
     let resultsAll = vehicles.map(compute);
 
+    // Move selected vehicle to top
     resultsAll.sort((a, b) =>
       a.type === selectedVehicle ? -1 : b.type === selectedVehicle ? 1 : 0
     );
@@ -59,10 +64,38 @@ export default function Home() {
     return `${h} hr ${m} min`;
   };
 
+  // Prepare chart data
+  const chartData = {
+    labels: results.map(r => r.type),
+    datasets: [
+      {
+        label: mode === "distance" ? "Time (hrs)" : "Distance (km)",
+        data: results.map(r => mode === "distance" ? r.time : r.distance),
+        backgroundColor: results.map(r =>
+          r.type === selectedVehicle ? "#007bff" : "#28a745"
+        ),
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      title: { display: true, text: "One-to-All Vehicle Comparison" },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
   return (
     <div className="converter-container">
       <h1>🚗 Vehicle Transport Converter</h1>
 
+      {/* Mode toggle */}
       <div className="mode-toggle">
         <label>
           <input
@@ -108,28 +141,36 @@ export default function Home() {
       </div>
 
       {results.length > 0 && (
-        <div className="results-section">
-          {results.map((r) => (
-            <div
-              key={r._id}
-              className={`vehicle-card ${
-                r.inRange ? "in-range" : "out-range"
-              } ${r.type === selectedVehicle ? "selected-vehicle" : ""}`}
-            >
-              <h3>
-                {r.type} {!r.inRange && <span className="out-range-text">❌ Out of Range</span>}
-              </h3>
-              <p>
-                <strong>Distance:</strong> {r.distance.toFixed(2)} km
-              </p>
-              <p>
-                <strong>Time:</strong> {formatTime(r.time)}
-              </p>
-              <p>
-                <strong>Fuel Used:</strong> {r.fuel.toFixed(2)} L
-              </p>
-            </div>
-          ))}
+        <div className="results-chart-container">
+          {/* Left: Vehicle Cards */}
+          <div className="results-section">
+            {results.map((r) => (
+              <div
+                key={r._id}
+                className={`vehicle-card ${
+                  r.inRange ? "in-range" : "out-range"
+                } ${r.type === selectedVehicle ? "selected-vehicle" : ""}`}
+              >
+                <h3>
+                  {r.type} {!r.inRange && <span className="out-range-text">❌ Out of Range</span>}
+                </h3>
+                <p>
+                  <strong>Distance:</strong> {r.distance.toFixed(2)} km
+                </p>
+                <p>
+                  <strong>Time:</strong> {formatTime(r.time)}
+                </p>
+                <p>
+                  <strong>Fuel Used:</strong> {r.fuel.toFixed(2)} L
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Right: Chart */}
+          <div className="chart-section">
+            <Bar data={chartData} options={chartOptions} />
+          </div>
         </div>
       )}
     </div>

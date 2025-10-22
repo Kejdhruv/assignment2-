@@ -19,6 +19,7 @@ h1 {
 }
 
 
+/* Mode toggle */
 .mode-toggle {
   display: flex;
   justify-content: center;
@@ -43,7 +44,7 @@ h1 {
   accent-color: #007bff;
 }
 
-
+/* Input section */
 .input-section {
   display: flex;
   flex-wrap: wrap;
@@ -84,14 +85,25 @@ button:hover {
   transform: scale(1.05);
 }
 
+/* Flex container for cards + chart */
+.results-chart-container {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  margin-top: 30px;
+}
 
+/* Left side: vehicle cards */
 .results-section {
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 25px;
+  max-height: 650px;
+  overflow-y: auto;
 }
 
-
+/* Vehicle cards */
 .vehicle-card {
   padding: 18px 15px;
   border-radius: 16px;
@@ -106,12 +118,10 @@ button:hover {
   box-shadow: 0 12px 25px rgba(0,0,0,0.15);
 }
 
-
 .vehicle-card.selected-vehicle {
   border: 2px solid #007bff;
   background: linear-gradient(145deg, #d0e4ff, #ffffff);
 }
-
 
 .vehicle-card.in-range {
   border-left: 5px solid #28a745;
@@ -141,6 +151,30 @@ button:hover {
   font-size: 0.95rem;
 }
 
+/* Right side: chart */
+.chart-section {
+  flex: 1;
+  min-width: 300px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Responsive adjustments */
+@media(max-width: 900px) {
+  .results-chart-container {
+    flex-direction: column;
+  }
+
+  .chart-section {
+    min-width: 100%;
+  }
+
+  .results-section {
+    max-height: none;
+  }
+}
 
 @media(max-width: 700px) {
   .input-section {
