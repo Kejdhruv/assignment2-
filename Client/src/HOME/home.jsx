@@ -4,9 +4,9 @@ import "./home.css";
 export default function Home() {
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [input, setInput] = useState(""); // distance or time
+  const [input, setInput] = useState(""); 
   const [results, setResults] = useState([]);
-  const [mode, setMode] = useState("distance"); // "distance" or "time"
+  const [mode, setMode] = useState("distance"); 
 
   useEffect(() => {
     fetch("http://localhost:3000/Cars")
@@ -43,7 +43,6 @@ export default function Home() {
 
     let resultsAll = vehicles.map(compute);
 
-    // Move selected vehicle to top
     resultsAll.sort((a, b) =>
       a.type === selectedVehicle ? -1 : b.type === selectedVehicle ? 1 : 0
     );
@@ -64,7 +63,6 @@ export default function Home() {
     <div className="converter-container">
       <h1>🚗 Vehicle Transport Converter</h1>
 
-      {/* Mode toggle */}
       <div className="mode-toggle">
         <label>
           <input
